@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Providers from "./providers"; // Ensure this import is correct
+import Providers from "./providers";
+import { Suspense } from 'react'; // <--- 1. Import Suspense
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,13 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers> {/* This is critical: children wrapped in Providers */}
-          <div className="flex-1 p-4">
-            {children}
-          </div>
-          {/* REMOVE THE <nav> BLOCK FROM HERE */}
-          {/* You should not have another nav here if BottomNav is already handling it */}
-        </Providers>
+        {/* 2. Wrap the Providers component in a Suspense boundary */}
+        <Suspense fallback={null}>
+          <Providers>
+            <div className="flex-1 p-4">
+              {children}
+            </div>
+          </Providers>
+        </Suspense>
       </body>
     </html>
   );

@@ -14,7 +14,6 @@ export default function LoginPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const router = useRouter();
-  // useSearchParams() is directly used here, so it needs to be inside a Suspense boundary
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/raw";
 
