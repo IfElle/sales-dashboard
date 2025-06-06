@@ -1,10 +1,11 @@
-// src/app/login/page.tsx
+
 //elzGotThis
+// src/app/login/page.tsx
 "use client";
 
-import { useState, Suspense } from "react"; // Import Suspense from 'react'
+import { useState, Suspense } from "react"; // <--- Crucial: Ensure Suspense is imported
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation"; // Correct hook for Next.js 13+
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,29 +14,26 @@ export default function LoginPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const router = useRouter();
-  // useSearchParams() is directly used here, hence the need for Suspense
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/raw"; // Default redirect after login
+  const searchParams = useSearchParams(); // This hook requires the Suspense boundary
+  const callbackUrl = searchParams.get("callbackUrl") || "/raw";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setFormError(null); // Clear previous errors
+    setFormError(null);
 
     try {
       const res = await signIn("credentials", {
-        redirect: false, // Prevent NextAuth from redirecting automatically
+        redirect: false,
         email,
         password,
       });
 
       if (res?.error) {
-        setFormError(res.error); // Display error message from NextAuth
+        setFormError(res.error);
       } else if (res?.ok) {
-        // If login is successful, redirect to the callbackUrl or dashboard
         router.push(callbackUrl);
       } else {
-        // Generic error if res.error is null but login wasn't successful
         setFormError("Login failed. Please check your credentials.");
       }
     } catch (error: any) {
@@ -47,14 +45,13 @@ export default function LoginPage() {
   };
 
   return (
+    // <--- Crucial: Ensure your main content is wrapped with Suspense
     <Suspense fallback={
-      <div
-        className="flex min-h-screen items-center justify-center bg-gray-100"
-      >
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
         <div className="text-center text-gray-700 p-8">Loading login form...</div>
       </div>
     }>
-      <div className="flex min-h-screen items-center justify-center bg-gray-100"style={{ backgroundImage: "url('/media/bg-image.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+      <div className="flex min-h-screen items-center justify-center bg-gray-100 " style={{ backgroundImage: "url('../media/bg-image.jpg')", backgroundSize: 'cover' }}>
         <form
           onSubmit={handleLogin}
           className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
