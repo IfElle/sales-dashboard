@@ -16,7 +16,7 @@ declare module "next-auth" {
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // never expose this on the frontend
+  process.env.SUPABASE_SERVICE_ROLE_KEY! 
 );
 
 const handler = NextAuth({
@@ -55,7 +55,7 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   pages: {
-    signIn: "../login", // your custom login page (optional)
+    signIn: "../login", // Redirect to custom login page
   },
   callbacks: {
     async session({ session, token }) {

@@ -1,7 +1,8 @@
 // src/app/login/page.tsx
+//elzGotThis
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react"; // Import Suspense from 'react'
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation"; // Correct hook for Next.js 13+
 
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const router = useRouter();
+  // useSearchParams() is directly used here, hence the need for Suspense
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/raw"; // Default redirect after login
 
@@ -45,11 +47,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100"  style={{ backgroundImage: "url('/media/bg-image.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Login to Sales Dashboard</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
+    <Suspense fallback={
+      <div
+        className="flex min-h-screen items-center justify-center bg-gray-100"
+      >
+        <div className="text-center text-gray-700 p-8">Loading login form...</div>
+      </div>
+    }>
+      <div className="flex min-h-screen items-center justify-center bg-gray-100"style={{ backgroundImage: "url('/media/bg-image.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+        <form
+          onSubmit={handleLogin}
+          className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
+        >
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
+          <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
@@ -79,20 +90,20 @@ export default function LoginPage() {
           </div>
 
           {formError && (
-            <div className="text-red-600 text-sm text-center">
+            <div className="text-red-600 text-sm text-center mt-4">
               {formError}
             </div>
           )}
 
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-6"
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>
-    </div>
+    </Suspense>
   );
 }
