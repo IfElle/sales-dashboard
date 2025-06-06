@@ -52,7 +52,7 @@ export default function BottomNav() {
       {session ? ( // If session data exists, user is logged in
         <button
           key="logout" // Key for React list rendering
-          onClick={() => signOut({ callbackUrl: "/login" })} // Actual logout action
+          onClick={() => signOut({ callbackUrl: "/" })} // Actual logout action
           className={clsx(
             "flex flex-col items-center text-sm p-2 rounded-md transition-colors duration-200",
             "text-red-600 hover:text-red-700 hover:bg-red-50" // Logout specific styling
