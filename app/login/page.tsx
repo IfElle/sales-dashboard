@@ -3,7 +3,7 @@
 // src/app/login/page.tsx
 "use client";
 
-import { useState, Suspense } from "react"; // <--- Crucial: Ensure Suspense is imported
+import { useState, Suspense } from "react"; // <--- Suspense is imported here
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -14,7 +14,8 @@ export default function LoginPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const router = useRouter();
-  const searchParams = useSearchParams(); // This hook requires the Suspense boundary
+  // useSearchParams() is directly used here, so it needs to be inside a Suspense boundary
+  const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/raw";
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -45,13 +46,13 @@ export default function LoginPage() {
   };
 
   return (
-    // <--- Crucial: Ensure your main content is wrapped with Suspense
+    // <--- The Suspense component wraps your main content here
     <Suspense fallback={
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
         <div className="text-center text-gray-700 p-8">Loading login form...</div>
       </div>
     }>
-      <div className="flex min-h-screen items-center justify-center bg-gray-100 " style={{ backgroundImage: "url('../media/bg-image.jpg')", backgroundSize: 'cover' }}>
+      <div className="flex min-h-screen items-center justify-center bg-gray-100" style={{ backgroundImage: "url('/media/bg-image.jpg')", backgroundSize: 'cover' }}>
         <form
           onSubmit={handleLogin}
           className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
