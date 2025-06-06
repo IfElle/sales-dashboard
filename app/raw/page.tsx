@@ -6,7 +6,14 @@ import BottomNav from "../components/BottomNav";
 import AuthGuard from "../components/AuthGuard";
 import Chart from "../components/Chart";
 import { groupByField } from "@/lib/utils"; // Assuming this utility is robust
-import type { SalesRawData } from "../types/supabase";
+import type { SalesRawData as OrigSalesRawData } from "../types/supabase";
+
+// Extend SalesRawData to ensure "Sales_Person" is a valid key
+type SalesRawData = OrigSalesRawData & {
+  Sales_Person?: string;
+  Ag_Company?: string;
+  Journey?: string; // For Domestic/International filtering
+};
 
 // Define the structure for global filters
 interface GlobalFilters {
@@ -108,8 +115,8 @@ export default function RawDataPage() {
       products: getUniqueValues("Product"),
       airlines: getUniqueValues("Airline"),
       suppliers: getUniqueValues("Supplier"),
-      salesPersons: getUniqueValues("Sales Person"), // Uses 'Agent Name' field
-      agCompanies: getUniqueValues("Ag Company"),
+      salesPersons: getUniqueValues("Sales_Person"),
+      agCompanies: getUniqueValues("Ag_Company"),
       cities: getUniqueValues("City"),
       sectors: getUniqueValues("Sector"),
       txTypes: getUniqueValues("Type"), 
@@ -156,8 +163,8 @@ export default function RawDataPage() {
     applyFilter("Product", globalFilters.product);
     applyFilter("Airline", globalFilters.airline);
     applyFilter("Supplier", globalFilters.supplier);
-    applyFilter("Sales Person", globalFilters.salesPerson); // Filter by 'Agent Name' using salesPerson filter state
-    applyFilter("Ag Company", globalFilters.agCompany);
+    applyFilter("Sales_Person", globalFilters.salesPerson); // Filter by 'Agent Name' using salesPerson filter state
+    applyFilter("Ag_Company", globalFilters.agCompany);
     applyFilter("City", globalFilters.city);
     applyFilter("Sector", globalFilters.sector);
     applyFilter("Type", globalFilters.txType); 
@@ -174,8 +181,8 @@ export default function RawDataPage() {
       BookingsByAirline: groupByField(filtered, "Airline", "Txid", true),
       RevenueBySupplier: groupByField(filtered, "Supplier", "Revenue"),
       // CommissionBySupplier: groupByField(filtered, "Supplier", "Commission"), // Removed
-      RevenueBySalesPerson: groupByField(filtered, "Sales Person", "Revenue"), // Added - uses 'Agent Name'
-      RevenueByCompany: groupByField(filtered, "Ag Company", "Revenue"),
+      RevenueBySalesPerson: groupByField(filtered, "Sales_Person", "Revenue"), // Added - uses 'Agent Name'
+      RevenueByCompany: groupByField(filtered, "Ag_Company", "Revenue"),
       // CommissionByAgent: groupByField(filtered, "Agent Name", "Commission"), // Removed
       RevenueByCity: groupByField(filtered, "City", "Revenue"),
       BookingsBySector: groupByField(filtered, "Sector", "Txid", true),
