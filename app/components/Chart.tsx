@@ -112,7 +112,7 @@ export default function Chart({
   };
 
   return (
-    <div className={cn("mb-6", className)}>
+    <div className={cn("mb-6", className)} style={{ marginBottom: "5em" }}>
       {title && <h2 className="text-lg font-semibold mb-2">{title}</h2>}
       <ResponsiveContainer width="100%" height={400}>
         {renderChart()}
