@@ -1,11 +1,10 @@
-
 //elzGotThis
 // src/app/login/page.tsx
 "use client";
 
-import { useState, Suspense } from "react"; // <--- Suspense is imported here
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter } from "next/navigation";
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs"; // Import Supabase client
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,8 +13,7 @@ export default function LoginPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/raw";
+  const supabase = createBrowserSupabaseClient(); // Initialize client-side Supabase client
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,16 +21,16 @@ export default function LoginPage() {
     setFormError(null);
 
     try {
-      const res = await signIn("credentials", {
-        redirect: false,
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (res?.error) {
-        setFormError(res.error);
-      } else if (res?.ok) {
-        router.push(callbackUrl);
+      if (error) {
+        setFormError(error.message);
+      } else if (data?.user) {
+        // If login is successful, redirect to the dashboard or intended page
+        router.push("/raw"); // Redirect to your dashboard page
       } else {
         setFormError("Login failed. Please check your credentials.");
       }
@@ -45,7 +43,6 @@ export default function LoginPage() {
   };
 
   return (
-    // <--- The Suspense component wraps your main content here
     <Suspense fallback={
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
         <div className="text-center text-gray-700 p-8">Loading login form...</div>

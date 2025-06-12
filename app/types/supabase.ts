@@ -14,6 +14,8 @@ export interface Database {
           cost: number;
           profit: number;
           created_at: string;
+          // Add Sales_Person here if it's part of the base table schema
+          Sales_Person?: string; // Add this line
         };
         Insert: {
           date: string;
@@ -23,9 +25,11 @@ export interface Database {
           cost: number;
           profit: number;
           created_at?: string;
+          // Add Sales_Person here
+          Sales_Person?: string; // Add this line
         };
-        
-        
+
+
         Update: Partial<Database['public']['Tables']['sales_raw_data']['Insert']>;
       };
     };
@@ -51,4 +55,10 @@ export type SalesRawData = {
   PaxNo: number;
   TxDate: string;
   JourneyDt: string;
+  Sales_Person?: string; // Add this line to the SalesRawData type
+};
+export type RawData = {
+  id: number;
+  sales_person: string;
+  sales_raw_data: SalesRawData[];
 };

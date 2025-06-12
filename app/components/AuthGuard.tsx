@@ -1,47 +1,65 @@
-// src/components/AuthGuard.tsx
+// components/AuthGuard.tsx (Conceptual example - adjust based on your actual file)
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useRouter, usePathname } from "next/navigation"; // Import usePathname
-import { ReactNode, useEffect } from "react";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-export default function AuthGuard({ children }: { children: ReactNode }) {
-  // Your existing skipAuth logic
-  const skipAuth = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
+interface AuthGuardProps {
+  children: React.ReactNode;
+}
 
-  const { data: session, status } = useSession();
+export default function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
-  const pathname = usePathname(); // Get current path to redirect back to after login
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const supabase = createBrowserSupabaseClient(); // Get Supabase client
 
   useEffect(() => {
-    // If skipAuth is true, we don't perform any authentication checks
-    if (skipAuth) {
-      return;
-    }
+    const checkAuth = async () => {
+      setLoading(true);
+      const { data: { session }, error } = await supabase.auth.getSession();
 
-    if (status === "loading") {
-      // Still loading session, do nothing or show a loading indicator
-      return;
-    }
+      if (error || !session) {
+        // Not authenticated, redirect to login
+        router.push('/login'); // Or your login path
+        setIsAuthenticated(false);
+      } else {
+        setIsAuthenticated(true);
+      }
+      setLoading(false);
+    };
 
-    if (status === "unauthenticated") {
-      // User is not authenticated, redirect to login page
-      // Encode the current path as a callbackUrl to redirect back after successful login
-      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
-    }
-  }, [status, router, pathname, skipAuth]); // Add pathname and skipAuth to dependency array
+    checkAuth();
 
-  // Render children only if authenticated or if skipAuth is true
-  if (skipAuth || status === "authenticated") {
-    return <>{children}</>;
+    // Optional: Listen for auth state changes if you want real-time updates
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        // User logged out
+        router.push('/login');
+        setIsAuthenticated(false);
+      } else {
+        setIsAuthenticated(true);
+      }
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe(); // Clean up the listener
+    };
+  }, [router, supabase]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl">Checking authentication...</div>
+      </div>
+    );
   }
 
-  // Show a loading spinner/message while authentication status is being determined
-  // or if the user is unauthenticated and being redirected.
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      <p className="ml-4 text-gray-700">Loading or redirecting...</p>
-    </div>
-  );
+  if (!isAuthenticated) {
+    // Optionally render nothing or a specific message before redirect
+    return null;
+  }
+
+  return <>{children}</>;
 }
