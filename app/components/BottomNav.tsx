@@ -76,7 +76,7 @@ export default function BottomNav() {
       ) : ( // If no session, user is not logged in
         <Link
           key="login"
-          href="/login"
+          href="/"
           className={clsx(
             "flex flex-col items-center text-sm p-2 rounded-md transition-colors duration-200",
             pathname === "/login" ? "text-blue-600 font-semibold bg-blue-50" : "text-gray-500 hover:text-blue-600 hover:bg-gray-100"
