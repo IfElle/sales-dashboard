@@ -94,9 +94,9 @@ export default function ForecastPage() {
             return;
           }
           data = await fetchForecastByDimension(
+            forecastPeriod,
             selectedDimension,
-            debouncedDimensionFilterValue,
-            forecastPeriod
+            debouncedDimensionFilterValue
           );
         }
         setForecastData(data);
@@ -446,7 +446,7 @@ export default function ForecastPage() {
               <div className="bg-white rounded-lg shadow p-6">
                 <h3 className="text-sm font-medium text-gray-500">Historical Average</h3>
                 <p className="text-3xl font-bold text-blue-600">
-                  ${stats.avgHistorical.toFixed(2)}
+                  ₹{stats.avgHistorical.toFixed(2)}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   {stats.historicalCount} months data
@@ -469,7 +469,7 @@ export default function ForecastPage() {
               <div className="bg-white rounded-lg shadow p-6">
                 <h3 className="text-sm font-medium text-gray-500">Next Month Forecast</h3>
                 <p className="text-3xl font-bold text-purple-600">
-                  {stats.nextMonthForecast !== null ? `$${stats.nextMonthForecast.toFixed(2)}` : "N/A"}
+                  {stats.nextMonthForecast !== null ? `₹${stats.nextMonthForecast.toFixed(2)}` : "N/A"}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   {stats.nextMonth || "No forecast available"}
@@ -557,10 +557,10 @@ export default function ForecastPage() {
                           {row.category}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
-                          {row.actual !== null ? `$${row.actual.toFixed(2)}` : "-"}
+                          {row.actual !== null ? `₹${row.actual.toFixed(2)}` : "-"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
-                          {row.forecast !== null ? `$${row.forecast.toFixed(2)}` : "-"}
+                          {row.forecast !== null ? `₹${row.forecast.toFixed(2)}` : "-"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {row.is_future ? "Projection" : "Historical"}
