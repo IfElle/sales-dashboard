@@ -35,7 +35,7 @@ export default function BottomNav() {
       console.error("Error logging out:", error.message);
       // Optionally display an error message to the user
     } else {
-      router.push("/login"); // Redirect to the login page after successful logout
+      router.push("/"); // Redirect to the login page after successful logout
     }
   };
 
@@ -75,11 +75,11 @@ export default function BottomNav() {
         </button>
       ) : ( // If no session, user is not logged in
         <Link
-          key="login"
-          href="/"
+          key="index"
+          href="./"
           className={clsx(
             "flex flex-col items-center text-sm p-2 rounded-md transition-colors duration-200",
-            pathname === "/login" ? "text-blue-600 font-semibold bg-blue-50" : "text-gray-500 hover:text-blue-600 hover:bg-gray-100"
+            pathname === "./" ? "text-blue-600 font-semibold bg-blue-50" : "text-gray-500 hover:text-blue-600 hover:bg-gray-100"
           )}
         >
           <LogIn size={20} className="mb-1" />
